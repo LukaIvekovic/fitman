@@ -39,6 +39,10 @@
                             <th>Datum i vrijeme:</th>
                             <td th:text="${#temporals.format(trening.datum, 'dd.MM.yyyy HH:mm')}"></td>
                         </tr>
+                        <tr>
+                            <th>Prostorija:</th>
+                            <td th:text="${trening.prostorija != null ? trening.prostorija.oznaka + ' - ' + trening.prostorija.naziv : 'Nije odabrana'}"></td>
+                        </tr>
                     </table>
                 </div>
                 <div class="col-md-6">

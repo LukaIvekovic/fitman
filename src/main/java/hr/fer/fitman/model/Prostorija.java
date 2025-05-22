@@ -19,6 +19,9 @@ public class Prostorija {
     @Column(name = "oznaka", nullable = false, length = 20)
     private String oznaka;
 
+    @Column(name = "naziv", nullable = false, length = 100)
+    private String naziv;
+
     @Column(name = "kapacitet", nullable = false)
     private Integer kapacitet;
 

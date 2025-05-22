@@ -34,6 +34,15 @@
                             <label for="trajanje" class="form-label">Trajanje (min)</label>
                             <input type="number" class="form-control" id="trajanje" th:field="*{trajanje}" required>
                         </div>
+                        <div class="mb-3">
+                            <label for="prostorijaOznaka" class="form-label">Prostorija</label>
+                            <select class="form-select" id="prostorijaOznaka" th:field="*{prostorijaOznaka}" required>
+                                <option value="">-- Odaberite prostoriju --</option>
+                                <option th:each="prostorija : ${prostorije}"
+                                        th:value="${prostorija.oznaka}"
+                                        th:text="${prostorija.oznaka + ' - ' + prostorija.naziv}"></option>
+                            </select>
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">

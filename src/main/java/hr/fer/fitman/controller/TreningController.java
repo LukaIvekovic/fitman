@@ -68,6 +68,11 @@ public class TreningController {
         treningForm.setMaxBrojPolaznika(trening.getMaxBrojPolaznika());
         treningForm.setDatum(trening.getDatum());
 
+        // Set the prostorija
+        if (trening.getProstorija() != null) {
+            treningForm.setProstorijaOznaka(trening.getProstorija().getOznaka());
+        }
+
         // Set selected trainer IDs
         treningForm.setTrenerId(trening.getTreneri().stream()
                 .map(Trener::getId)

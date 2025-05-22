@@ -46,6 +46,7 @@
             <th>ID</th>
             <th>Naziv</th>
             <th>Težina</th>
+            <th>Prostorija</th>
             <th>Trajanje (min)</th>
             <th>Datum</th>
             <th>Akcije</th>
@@ -56,6 +57,7 @@
             <td th:text="${trening.id}"></td>
             <td th:text="${trening.naziv}"></td>
             <td th:text="${trening.tezina}"></td>
+            <td th:text="${trening.prostorija.naziv}"></td>
             <td th:text="${trening.trajanje}"></td>
             <td th:text="${#temporals.format(trening.datum, 'dd.MM.yyyy HH:mm')}"></td>
             <td>

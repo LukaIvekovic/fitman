@@ -45,6 +45,10 @@ public class Trening {
     )
     private Set<Trener> treneri = new HashSet<>();
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "prostorija_id", nullable = false)
+    private Prostorija prostorija;
+
     public void addTrener(Trener trener) {
         this.treneri.add(trener);
         trener.getTreninzi().add(this);

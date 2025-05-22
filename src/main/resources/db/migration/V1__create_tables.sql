@@ -2,6 +2,7 @@ CREATE TABLE prostorija
 (
     id        BIGINT AUTO_INCREMENT PRIMARY KEY,
     oznaka    VARCHAR(20) NOT NULL,
+    naziv     VARCHAR(100) NOT NULL,
     kapacitet INTEGER     NOT NULL DEFAULT 0,
     opis      VARCHAR(255),
     aktivna   BOOLEAN     NOT NULL DEFAULT TRUE
@@ -21,12 +22,14 @@ CREATE TABLE trener
 CREATE TABLE trening
 (
     id                 BIGINT AUTO_INCREMENT PRIMARY KEY,
+    prostorija_id      BIGINT       NOT NULL,
     naziv              VARCHAR(100) NOT NULL,
     opis               VARCHAR(500),
     tezina             VARCHAR(20)  NOT NULL,
     trajanje           INTEGER      NOT NULL, -- u minutama
     max_broj_polaznika INTEGER,
-    datum              TIMESTAMP    NOT NULL
+    datum              TIMESTAMP    NOT NULL,
+    FOREIGN KEY (prostorija_id) REFERENCES prostorija (id) ON DELETE CASCADE
 );
 
 CREATE TABLE trening_trener

@@ -1,6 +1,7 @@
 package hr.fer.fitman.service;
 
 import hr.fer.fitman.dto.TreningFormDTO;
+import hr.fer.fitman.model.Prostorija;
 import hr.fer.fitman.model.Trener;
 import hr.fer.fitman.model.Trening;
 import hr.fer.fitman.repository.TrenerRepository;
@@ -20,11 +21,13 @@ public class TreningService {
 
     private final TreningRepository treningRepository;
     private final TrenerRepository trenerRepository;
+    private final ProstorijaService prostorijaService;
 
     @Autowired
-    public TreningService(TreningRepository treningRepository, TrenerRepository trenerRepository) {
+    public TreningService(TreningRepository treningRepository, TrenerRepository trenerRepository, ProstorijaService prostorijaService) {
         this.treningRepository = treningRepository;
         this.trenerRepository = trenerRepository;
+        this.prostorijaService = prostorijaService;
     }
 
     public List<Trening> findAll() {
@@ -55,6 +58,12 @@ public class TreningService {
         trening.setTrajanje(treningDTO.getTrajanje());
         trening.setMaxBrojPolaznika(treningDTO.getMaxBrojPolaznika());
         trening.setDatum(treningDTO.getDatum());
+
+        // Set prostorija
+        if (treningDTO.getProstorijaOznaka() != null) {
+            Prostorija prostorija = prostorijaService.findByOznaka(treningDTO.getProstorijaOznaka());
+            trening.setProstorija(prostorija);
+        }
 
         // Assign trainers
         if (treningDTO.getTrenerId() != null && !treningDTO.getTrenerId().isEmpty()) {
