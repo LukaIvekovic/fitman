@@ -54,9 +54,15 @@
 
                 <h4 class="mb-3">Odabir trenera</h4>
                 <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Treneri</span>
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#noviTrenerModal">
+                            <i class="bi bi-plus-circle"></i> Dodaj novog trenera
+                        </button>
+                    </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table table-hover" id="treneriTable">
                                 <thead>
                                 <tr>
                                     <th>Odabir</th>
@@ -97,6 +103,122 @@
             </form>
         </div>
     </div>
+
+    <!-- Modal za dodavanje novog trenera -->
+    <div class="modal fade" id="noviTrenerModal" tabindex="-1" aria-labelledby="noviTrenerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="noviTrenerModalLabel">Dodaj novog trenera</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="noviTrenerForm">
+                        <div class="mb-3">
+                            <label for="trenerIme" class="form-label">Ime</label>
+                            <input type="text" class="form-control" id="trenerIme" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="trenerPrezime" class="form-label">Prezime</label>
+                            <input type="text" class="form-control" id="trenerPrezime" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="trenerSpecijalizacija" class="form-label">Specijalizacija</label>
+                            <input type="text" class="form-control" id="trenerSpecijalizacija" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="trenerGodineIskustva" class="form-label">Godine iskustva</label>
+                            <input type="number" class="form-control" id="trenerGodineIskustva" min="0" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Odustani</button>
+                    <button type="button" class="btn btn-primary" id="spremiTrenerButton">Spremi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const spremiTrenerButton = document.getElementById('spremiTrenerButton');
+
+            spremiTrenerButton.addEventListener('click', function() {
+                // Dohvaćanje podataka iz forme
+                const ime = document.getElementById('trenerIme').value;
+                const prezime = document.getElementById('trenerPrezime').value;
+                const specijalizacija = document.getElementById('trenerSpecijalizacija').value;
+                const godineIskustva = document.getElementById('trenerGodineIskustva').value;
+
+                if (!ime || !prezime || !specijalizacija || !godineIskustva) {
+                    alert('Molimo popunite sva polja');
+                    return;
+                }
+
+                // Kreiranje objekta za slanje
+                const trener = {
+                    ime: ime,
+                    prezime: prezime,
+                    specijalizacija: specijalizacija,
+                    godineIskustva: godineIskustva
+                };
+
+                // Slanje podataka serveru
+                fetch('/treneri/api/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(trener)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Greška prilikom spremanja trenera');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Dodavanje novog trenera u tablicu
+                        const table = document.getElementById('treneriTable');
+                        const tbody = table.querySelector('tbody');
+
+                        // Ako postoji poruka "Nema dostupnih trenera", ukloni je
+                        const emptyRow = tbody.querySelector('tr td[colspan="5"]');
+                        if (emptyRow) {
+                            tbody.innerHTML = '';
+                        }
+
+                        // Kreiranje novog reda
+                        const newRow = document.createElement('tr');
+                        newRow.innerHTML = `
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox"
+                                       value="${data.id}" name="trenerId" checked>
+                            </div>
+                        </td>
+                        <td>${data.ime}</td>
+                        <td>${data.prezime}</td>
+                        <td>${data.specijalizacija}</td>
+                        <td>${data.godineIskustva}</td>
+                    `;
+                        tbody.appendChild(newRow);
+
+                        // Zatvaranje modala
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('noviTrenerModal'));
+                        modal.hide();
+
+                        // Resetiranje forme
+                        document.getElementById('noviTrenerForm').reset();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Došlo je do greške prilikom spremanja trenera.');
+                    });
+            });
+        });
+    </script>
 </div>
 </body>
 </html>
