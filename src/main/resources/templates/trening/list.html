@@ -12,6 +12,34 @@
         <a th:href="@{/treninzi/new}" class="btn btn-primary">Novi trening</a>
     </div>
 
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Pretraživanje</h5>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/treninzi/search}" method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label for="naziv" class="form-label">Naziv treninga</label>
+                    <input type="text" class="form-control" id="naziv" name="naziv" th:value="${param.naziv}">
+                </div>
+                <div class="col-md-3">
+                    <label for="datumOd" class="form-label">Datum od</label>
+                    <input type="date" class="form-control" id="datumOd" name="datumOd" th:value="${param.datumOd}">
+                </div>
+                <div class="col-md-3">
+                    <label for="datumDo" class="form-label">Datum do</label>
+                    <input type="date" class="form-control" id="datumDo" name="datumDo" th:value="${param.datumDo}">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <div class="d-grid gap-2 w-100">
+                        <button type="submit" class="btn btn-primary">Pretraži</button>
+                        <a th:href="@{/treninzi}" class="btn btn-outline-secondary">Poništi</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <table class="table table-striped">
         <thead>
         <tr>

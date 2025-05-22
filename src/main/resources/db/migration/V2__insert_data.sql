@@ -14,5 +14,4 @@ VALUES (1, 'Aerobik', 'Intenzivni aerobni trening', 'Srednja', 60, 15, CURRENT_T
 
 -- Povezivanje treninga i trenera kroz veznu tablicu
 INSERT INTO trening_trener (trening_id, trener_id)
-VALUES (1, 1),
-       (2, 1);
+VALUES (1, 1);

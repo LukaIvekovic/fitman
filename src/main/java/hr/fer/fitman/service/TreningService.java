@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.time.LocalDateTime;
 
 @Service
 public class TreningService {
@@ -73,5 +74,13 @@ public class TreningService {
     @Transactional
     public void deleteTrening(Long id) {
         treningRepository.deleteById(id);
+    }
+
+    public List<Trening> findByFilters(String naziv, LocalDateTime datumOd, LocalDateTime datumDo) {
+        if (naziv != null && !naziv.isEmpty()) {
+            return treningRepository.findByNazivContainingIgnoreCaseAndDatumBetween(naziv, datumOd, datumDo);
+        } else {
+            return treningRepository.findByDatumBetween(datumOd, datumDo);
+        }
     }
 }

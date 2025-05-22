@@ -165,7 +165,7 @@
                 };
 
                 // Slanje podataka serveru
-                fetch('/treneri/api/create', {
+                fetch('/treneri/create', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -217,8 +217,103 @@
                         alert('Došlo je do greške prilikom spremanja trenera.');
                     });
             });
+
+            // Get references to key form elements
+            const datumInput = document.getElementById('datum');
+            const trajanjeInput = document.getElementById('trajanje');
+            const trenerCheckboxes = document.querySelectorAll('input[name="trenerId"]');
+            const treningId = document.querySelector('input[name="id"]').value || '';
+
+            // Add change listeners to trainer checkboxes
+            trenerCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        // Check availability when a trainer is selected
+                        provjeriDostupnostTrenera(this.value);
+                    }
+                });
+            });
+
+            // Re-validate selected trainers when date/time changes
+            datumInput.addEventListener('change', function() {
+                provjeriDostupnostSvihTrenera();
+            });
+
+            trajanjeInput.addEventListener('input', function() {
+                provjeriDostupnostSvihTrenera();
+            });
+
+            function provjeriDostupnostTrenera(trenerId) {
+                const datum = datumInput.value;
+                const trajanje = trajanjeInput.value;
+
+                if (!datum || !trajanje) return; // Skip validation if required fields are empty
+
+                // Send API request to check availability
+                fetch(`/treneri/dostupnost?trenerId=${trenerId}&datum=${datum}&trajanje=${trajanje}&treningId=${treningId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.dostupan) {
+                            // Trainer is not available - uncheck and show warning
+                            const checkbox = document.querySelector(`input[name="trenerId"][value="${trenerId}"]`);
+
+                            const trenerRow = checkbox.closest('tr');
+                            const trenerIme = trenerRow.cells[1].textContent.trim();
+                            const trenerPrezime = trenerRow.cells[2].textContent.trim();
+
+                            checkbox.checked = false;
+
+                            // Format conflicts for display
+                            let konfliktHtml = data.konflikti.map(k =>
+                                `<div class="mb-1"><strong>${k.naziv}</strong> (${k.datum})</div>`
+                            ).join('');
+
+                            // Show toast with properly formatted message
+                            document.getElementById('conflictMessage').innerHTML =
+                                `<div class="mb-2">Trener <strong>${trenerIme} ${trenerPrezime}</strong> već ima zakazane treninge:</div>${konfliktHtml}`;
+
+                            const toast = new bootstrap.Toast(document.getElementById('conflictToast'));
+                            toast.show();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Greška prilikom provjere dostupnosti:', error);
+
+                        // Show error toast
+                        document.getElementById('conflictMessage').textContent =
+                            'Došlo je do greške prilikom provjere dostupnosti trenera.';
+
+                        const toast = new bootstrap.Toast(document.getElementById('conflictToast'), {
+                            className: 'bg-danger text-white'
+                        });
+                        toast.show();
+                    });
+            }
+
+            // Check all selected trainers
+            function provjeriDostupnostSvihTrenera() {
+                const selectedTreneri = Array.from(trenerCheckboxes)
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value);
+
+                selectedTreneri.forEach(trenerId => {
+                    provjeriDostupnostTrenera(trenerId);
+                });
+            }
         });
     </script>
+    <div class="position-fixed top-0 start-0 p-3" style="z-index: 11">
+        <div id="conflictToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-warning text-dark">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <strong class="me-auto">Konflikt termina</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                <p id="conflictMessage"></p>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>

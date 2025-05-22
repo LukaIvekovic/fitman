@@ -7,10 +7,12 @@ import hr.fer.fitman.service.ProstorijaService;
 import hr.fer.fitman.service.TrenerService;
 import hr.fer.fitman.service.TreningService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -98,5 +100,32 @@ public class TreningController {
 
         model.addAttribute("trening", trening);
         return "trening/view";
+    }
+
+    @GetMapping("/search")
+    public String pretragaTreninzi(
+            @RequestParam(required = false) String naziv,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate datumOd,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate datumDo,
+            Model model) {
+
+        List<Trening> treninzi;
+
+        if (naziv != null && !naziv.isEmpty() || datumOd != null || datumDo != null) {
+            // Convert LocalDate to LocalDateTime for comparison
+            LocalDateTime startDateTime = datumOd != null ?
+                    datumOd.atStartOfDay() : LocalDateTime.of(1900, 1, 1, 0, 0);
+
+            LocalDateTime endDateTime = datumDo != null ?
+                    datumDo.plusDays(1).atStartOfDay().minusNanos(1) : LocalDateTime.of(2100, 12, 31, 23, 59, 59);
+
+            // Get filtered treninzi
+            treninzi = treningService.findByFilters(naziv, startDateTime, endDateTime);
+        } else {
+            treninzi = treningService.findAll();
+        }
+
+        model.addAttribute("treninzi", treninzi);
+        return "trening/list";
     }
 }
