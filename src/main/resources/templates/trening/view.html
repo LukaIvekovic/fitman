@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Pregled treninga</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h3>Pregled treninga</h3>
+            <div>
+                <a th:href="@{/treninzi/{id}/edit(id=${trening.id})}" class="btn btn-warning">Uredi</a>
+                <a th:href="@{/treninzi}" class="btn btn-secondary">Natrag na popis</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <table class="table">
+                        <tr>
+                            <th>Naziv:</th>
+                            <td th:text="${trening.naziv}"></td>
+                        </tr>
+                        <tr>
+                            <th>Težina:</th>
+                            <td th:text="${trening.tezina}"></td>
+                        </tr>
+                        <tr>
+                            <th>Trajanje:</th>
+                            <td th:text="${trening.trajanje + ' minuta'}"></td>
+                        </tr>
+                        <tr>
+                            <th>Max broj polaznika:</th>
+                            <td th:text="${trening.maxBrojPolaznika}"></td>
+                        </tr>
+                        <tr>
+                            <th>Datum i vrijeme:</th>
+                            <td th:text="${#temporals.format(trening.datum, 'dd.MM.yyyy HH:mm')}"></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">Opis</div>
+                        <div class="card-body">
+                            <p th:text="${trening.opis ?: 'Nema opisa'}"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h4 class="mb-3">Treneri</h4>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Ime</th>
+                        <th>Prezime</th>
+                        <th>Specijalizacija</th>
+                        <th>Godine iskustva</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="trener : ${trening.treneri}">
+                        <td th:text="${trener.ime}"></td>
+                        <td th:text="${trener.prezime}"></td>
+                        <td th:text="${trener.specijalizacija}"></td>
+                        <td th:text="${trener.godineIskustva}"></td>
+                    </tr>
+                    <tr th:if="${#sets.isEmpty(trening.treneri)}">
+                        <td colspan="4" class="text-center">Nema dodijeljenih trenera</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

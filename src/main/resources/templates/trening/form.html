@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}" lang="hr">
+<head>
+    <title th:text="${mode == 'create' ? 'Novi trening' : 'Uredi trening'}"></title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h3 th:text="${mode == 'create' ? 'Novi trening' : 'Uredi trening'}"></h3>
+            <a th:href="@{/treninzi}" class="btn btn-secondary">Natrag na popis</a>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/treninzi/save}" th:object="${treningForm}" method="post">
+                <input type="hidden" th:field="*{id}" />
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="naziv" class="form-label">Naziv treninga</label>
+                            <input type="text" class="form-control" id="naziv" th:field="*{naziv}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tezina" class="form-label">Težina</label>
+                            <select class="form-select" id="tezina" th:field="*{tezina}" required>
+                                <option value="Početna">Početna</option>
+                                <option value="Srednja">Srednja</option>
+                                <option value="Napredna">Napredna</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="trajanje" class="form-label">Trajanje (min)</label>
+                            <input type="number" class="form-control" id="trajanje" th:field="*{trajanje}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="maxBrojPolaznika" class="form-label">Maksimalan broj polaznika</label>
+                            <input type="number" class="form-control" id="maxBrojPolaznika" th:field="*{maxBrojPolaznika}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="datum" class="form-label">Datum i vrijeme</label>
+                            <input type="datetime-local" class="form-control" id="datum"
+                                   th:field="*{datum}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="opis" class="form-label">Opis</label>
+                            <textarea class="form-control" id="opis" rows="3" th:field="*{opis}"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="mb-3">Odabir trenera</h4>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Odabir</th>
+                                    <th>Ime</th>
+                                    <th>Prezime</th>
+                                    <th>Specijalizacija</th>
+                                    <th>Godine iskustva</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="trener : ${treneri}">
+                                    <td>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox"
+                                                   th:value="${trener.id}" th:field="*{trenerId}">
+                                        </div>
+                                    </td>
+                                    <td th:text="${trener.ime}"></td>
+                                    <td th:text="${trener.prezime}"></td>
+                                    <td th:text="${trener.specijalizacija}"></td>
+                                    <td th:text="${trener.godineIskustva}"></td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(treneri)}">
+                                    <td colspan="5" class="text-center">Nema dostupnih trenera</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <button type="submit" class="btn btn-success me-2">Spremi</button>
+                        <a th:href="@{/treninzi}" class="btn btn-danger">Odustani</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
