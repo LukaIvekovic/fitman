@@ -6,7 +6,7 @@ import hr.fer.fitman.model.Trening;
 import hr.fer.fitman.service.ProstorijaService;
 import hr.fer.fitman.service.TrenerService;
 import hr.fer.fitman.service.TreningService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,20 +19,11 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/treninzi")
+@RequiredArgsConstructor
 public class TreningController {
-
     private final TreningService treningService;
     private final TrenerService trenerService;
     private final ProstorijaService prostorijaService;
-
-    @Autowired
-    public TreningController(TreningService treningService,
-                             TrenerService trenerService,
-                             ProstorijaService prostorijaService) {
-        this.treningService = treningService;
-        this.trenerService = trenerService;
-        this.prostorijaService = prostorijaService;
-    }
 
     @GetMapping
     public String listTreninzi(Model model) {
@@ -68,12 +59,10 @@ public class TreningController {
         treningForm.setMaxBrojPolaznika(trening.getMaxBrojPolaznika());
         treningForm.setDatum(trening.getDatum());
 
-        // Set the prostorija
         if (trening.getProstorija() != null) {
             treningForm.setProstorijaOznaka(trening.getProstorija().getOznaka());
         }
 
-        // Set selected trainer IDs
         treningForm.setTrenerId(trening.getTreneri().stream()
                 .map(Trener::getId)
                 .collect(Collectors.toList()));
@@ -117,14 +106,12 @@ public class TreningController {
         List<Trening> treninzi;
 
         if (naziv != null && !naziv.isEmpty() || datumOd != null || datumDo != null) {
-            // Convert LocalDate to LocalDateTime for comparison
             LocalDateTime startDateTime = datumOd != null ?
                     datumOd.atStartOfDay() : LocalDateTime.of(1900, 1, 1, 0, 0);
 
             LocalDateTime endDateTime = datumDo != null ?
                     datumDo.plusDays(1).atStartOfDay().minusNanos(1) : LocalDateTime.of(2100, 12, 31, 23, 59, 59);
 
-            // Get filtered treninzi
             treninzi = treningService.findByFilters(naziv, startDateTime, endDateTime);
         } else {
             treninzi = treningService.findAll();

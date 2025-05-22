@@ -6,7 +6,7 @@ import hr.fer.fitman.model.Trener;
 import hr.fer.fitman.model.Trening;
 import hr.fer.fitman.repository.TrenerRepository;
 import hr.fer.fitman.repository.TreningRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,18 +17,11 @@ import java.util.stream.Collectors;
 import java.time.LocalDateTime;
 
 @Service
+@RequiredArgsConstructor
 public class TreningService {
-
     private final TreningRepository treningRepository;
     private final TrenerRepository trenerRepository;
     private final ProstorijaService prostorijaService;
-
-    @Autowired
-    public TreningService(TreningRepository treningRepository, TrenerRepository trenerRepository, ProstorijaService prostorijaService) {
-        this.treningRepository = treningRepository;
-        this.trenerRepository = trenerRepository;
-        this.prostorijaService = prostorijaService;
-    }
 
     public List<Trening> findAll() {
         return treningRepository.findAll();
@@ -45,13 +38,11 @@ public class TreningService {
         if (treningDTO.getId() != null) {
             trening = treningRepository.findById(treningDTO.getId())
                     .orElse(new Trening());
-            // Clear existing trainers to avoid duplicates
             trening.getTreneri().clear();
         } else {
             trening = new Trening();
         }
 
-        // Set basic properties
         trening.setNaziv(treningDTO.getNaziv());
         trening.setOpis(treningDTO.getOpis());
         trening.setTezina(treningDTO.getTezina());
@@ -59,13 +50,11 @@ public class TreningService {
         trening.setMaxBrojPolaznika(treningDTO.getMaxBrojPolaznika());
         trening.setDatum(treningDTO.getDatum());
 
-        // Set prostorija
         if (treningDTO.getProstorijaOznaka() != null) {
             Prostorija prostorija = prostorijaService.findByOznaka(treningDTO.getProstorijaOznaka());
             trening.setProstorija(prostorija);
         }
 
-        // Assign trainers
         if (treningDTO.getTrenerId() != null && !treningDTO.getTrenerId().isEmpty()) {
             Set<Trener> treneri = treningDTO.getTrenerId().stream()
                     .map(id -> trenerRepository.findById(id).orElse(null))

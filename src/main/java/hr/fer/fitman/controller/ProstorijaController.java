@@ -2,7 +2,7 @@ package hr.fer.fitman.controller;
 
 import hr.fer.fitman.model.Prostorija;
 import hr.fer.fitman.service.ProstorijaService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -11,14 +11,9 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/prostorije")
+@RequiredArgsConstructor
 public class ProstorijaController {
-
     private final ProstorijaService prostorijaService;
-
-    @Autowired
-    public ProstorijaController(ProstorijaService prostorijaService) {
-        this.prostorijaService = prostorijaService;
-    }
 
     @GetMapping
     public String listProstorije(Model model) {

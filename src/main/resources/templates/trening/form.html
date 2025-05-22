@@ -113,7 +113,6 @@
         </div>
     </div>
 
-    <!-- Modal za dodavanje novog trenera -->
     <div class="modal fade" id="noviTrenerModal" tabindex="-1" aria-labelledby="noviTrenerModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -154,7 +153,6 @@
             const spremiTrenerButton = document.getElementById('spremiTrenerButton');
 
             spremiTrenerButton.addEventListener('click', function() {
-                // Dohvaćanje podataka iz forme
                 const ime = document.getElementById('trenerIme').value;
                 const prezime = document.getElementById('trenerPrezime').value;
                 const specijalizacija = document.getElementById('trenerSpecijalizacija').value;
@@ -165,7 +163,6 @@
                     return;
                 }
 
-                // Kreiranje objekta za slanje
                 const trener = {
                     ime: ime,
                     prezime: prezime,
@@ -173,7 +170,6 @@
                     godineIskustva: godineIskustva
                 };
 
-                // Slanje podataka serveru
                 fetch('/treneri/create', {
                     method: 'POST',
                     headers: {
@@ -188,17 +184,14 @@
                         return response.json();
                     })
                     .then(data => {
-                        // Dodavanje novog trenera u tablicu
                         const table = document.getElementById('treneriTable');
                         const tbody = table.querySelector('tbody');
 
-                        // Ako postoji poruka "Nema dostupnih trenera", ukloni je
                         const emptyRow = tbody.querySelector('tr td[colspan="5"]');
                         if (emptyRow) {
                             tbody.innerHTML = '';
                         }
 
-                        // Kreiranje novog reda
                         const newRow = document.createElement('tr');
                         newRow.innerHTML = `
                         <td>
@@ -214,11 +207,9 @@
                     `;
                         tbody.appendChild(newRow);
 
-                        // Zatvaranje modala
                         const modal = bootstrap.Modal.getInstance(document.getElementById('noviTrenerModal'));
                         modal.hide();
 
-                        // Resetiranje forme
                         document.getElementById('noviTrenerForm').reset();
                     })
                     .catch(error => {
@@ -227,23 +218,19 @@
                     });
             });
 
-            // Get references to key form elements
             const datumInput = document.getElementById('datum');
             const trajanjeInput = document.getElementById('trajanje');
             const trenerCheckboxes = document.querySelectorAll('input[name="trenerId"]');
             const treningId = document.querySelector('input[name="id"]').value || '';
 
-            // Add change listeners to trainer checkboxes
             trenerCheckboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
                     if (this.checked) {
-                        // Check availability when a trainer is selected
                         provjeriDostupnostTrenera(this.value);
                     }
                 });
             });
 
-            // Re-validate selected trainers when date/time changes
             datumInput.addEventListener('change', function() {
                 provjeriDostupnostSvihTrenera();
             });
@@ -256,14 +243,12 @@
                 const datum = datumInput.value;
                 const trajanje = trajanjeInput.value;
 
-                if (!datum || !trajanje) return; // Skip validation if required fields are empty
+                if (!datum || !trajanje) return;
 
-                // Send API request to check availability
-                fetch(`/treneri/dostupnost?trenerId=${trenerId}&datum=${datum}&trajanje=${trajanje}&treningId=${treningId}`)
+                fetch(`/treneri/available?trenerId=${trenerId}&datum=${datum}&trajanje=${trajanje}&treningId=${treningId}`)
                     .then(response => response.json())
                     .then(data => {
                         if (!data.dostupan) {
-                            // Trainer is not available - uncheck and show warning
                             const checkbox = document.querySelector(`input[name="trenerId"][value="${trenerId}"]`);
 
                             const trenerRow = checkbox.closest('tr');
@@ -272,12 +257,10 @@
 
                             checkbox.checked = false;
 
-                            // Format conflicts for display
                             let konfliktHtml = data.konflikti.map(k =>
                                 `<div class="mb-1"><strong>${k.naziv}</strong> (${k.datum})</div>`
                             ).join('');
 
-                            // Show toast with properly formatted message
                             document.getElementById('conflictMessage').innerHTML =
                                 `<div class="mb-2">Trener <strong>${trenerIme} ${trenerPrezime}</strong> već ima zakazane treninge:</div>${konfliktHtml}`;
 
@@ -288,7 +271,6 @@
                     .catch(error => {
                         console.error('Greška prilikom provjere dostupnosti:', error);
 
-                        // Show error toast
                         document.getElementById('conflictMessage').textContent =
                             'Došlo je do greške prilikom provjere dostupnosti trenera.';
 
@@ -299,7 +281,6 @@
                     });
             }
 
-            // Check all selected trainers
             function provjeriDostupnostSvihTrenera() {
                 const selectedTreneri = Array.from(trenerCheckboxes)
                     .filter(cb => cb.checked)

@@ -4,7 +4,7 @@ import hr.fer.fitman.model.Trener;
 import hr.fer.fitman.model.Trening;
 import hr.fer.fitman.service.TrenerService;
 import hr.fer.fitman.service.ValidacijaService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,40 +18,31 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/treneri")
+@RequiredArgsConstructor
 public class TrenerController {
-
     private final TrenerService trenerService;
     private final ValidacijaService validacijaService;
 
-    @Autowired
-    public TrenerController(TrenerService trenerService, ValidacijaService validacijaService) {
-        this.trenerService = trenerService;
-        this.validacijaService = validacijaService;
-    }
-
-    @PostMapping("/create")
     @ResponseBody
+    @PostMapping("/create")
     public ResponseEntity<Trener> createTrener(@RequestBody Trener trener) {
         Trener savedTrener = trenerService.save(trener);
         return ResponseEntity.ok(savedTrener);
     }
 
-    @GetMapping("/dostupnost")
     @ResponseBody
+    @GetMapping("/available")
     public ResponseEntity<?> provjeriDostupnostTrenera(
             @RequestParam Long trenerId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime datum,
             @RequestParam Integer trajanje,
             @RequestParam(required = false) Long treningId) {
 
-        // Get list of conflicts for this trainer
         List<Trening> conflicts = validacijaService.provjeriDostupnostTrenera(trenerId, datum, trajanje, treningId);
 
-        // Prepare response
         Map<String, Object> response = new HashMap<>();
         response.put("dostupan", conflicts.isEmpty());
 
-        // Include conflict details if any were found
         if (!conflicts.isEmpty()) {
             List<Map<String, Object>> conflictData = conflicts.stream()
                     .map(t -> {

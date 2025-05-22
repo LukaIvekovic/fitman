@@ -2,7 +2,7 @@ package hr.fer.fitman.service;
 
 import hr.fer.fitman.model.Prostorija;
 import hr.fer.fitman.repository.ProstorijaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,14 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ProstorijaService {
-
     private final ProstorijaRepository prostorijaRepository;
-
-    @Autowired
-    public ProstorijaService(ProstorijaRepository prostorijaRepository) {
-        this.prostorijaRepository = prostorijaRepository;
-    }
 
     public List<Prostorija> findAll() {
         return prostorijaRepository.findAll();

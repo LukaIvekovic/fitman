@@ -9,7 +9,6 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Prostorija {
 
     @Id
@@ -25,7 +24,7 @@ public class Prostorija {
     @Column(name = "kapacitet", nullable = false)
     private Integer kapacitet;
 
-    @Column(name = "opis", length = 255)
+    @Column(name = "opis")
     private String opis;
 
     @Column(name = "aktivna", nullable = false)
