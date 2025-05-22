@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title th:text="${mode == 'create' ? 'Nova prostorija' : 'Uredi prostoriju'}"></title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h3 th:text="${mode == 'create' ? 'Nova prostorija' : 'Uredi prostoriju'}"></h3>
+            <a th:href="@{/prostorije}" class="btn btn-secondary">Natrag na popis</a>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/prostorije/save}" th:object="${prostorija}" method="post">
+                <input type="hidden" th:field="*{id}" />
+
+                <div class="mb-3">
+                    <label for="oznaka" class="form-label">Oznaka</label>
+                    <input type="text" class="form-control" id="oznaka" th:field="*{oznaka}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="naziv" class="form-label">Naziv</label>
+                    <input type="text" class="form-control" id="naziv" th:field="*{naziv}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="kapacitet" class="form-label">Kapacitet</label>
+                    <input type="number" class="form-control" id="kapacitet" th:field="*{kapacitet}" required min="0">
+                </div>
+
+                <div class="mb-3">
+                    <label for="opis" class="form-label">Opis</label>
+                    <textarea class="form-control" id="opis" rows="3" th:field="*{opis}"></textarea>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="aktivna" th:field="*{aktivna}">
+                    <label class="form-check-label" for="aktivna">Aktivna</label>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <button type="submit" class="btn btn-success me-2">Spremi</button>
+                        <a th:href="@{/prostorije}" class="btn btn-danger">Odustani</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Prostorije</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Prostorije</h2>
+        <a th:href="@{/prostorije/new}" class="btn btn-primary">Nova prostorija</a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Oznaka</th>
+                    <th>Naziv</th>
+                    <th>Kapacitet</th>
+                    <th>Status</th>
+                    <th>Akcije</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="prostorija : ${prostorije}">
+                    <td th:text="${prostorija.id}"></td>
+                    <td th:text="${prostorija.oznaka}"></td>
+                    <td th:text="${prostorija.naziv}"></td>
+                    <td th:text="${prostorija.kapacitet}"></td>
+                    <td>
+                        <span th:if="${prostorija.aktivna}" class="badge bg-success">Aktivna</span>
+                        <span th:unless="${prostorija.aktivna}" class="badge bg-secondary">Neaktivna</span>
+                    </td>
+                    <td>
+                        <a th:href="@{/prostorije/{id}(id=${prostorija.id})}" class="btn btn-info btn-sm">Pregledaj</a>
+                        <a th:href="@{/prostorije/{id}/edit(id=${prostorija.id})}" class="btn btn-warning btn-sm">Uredi</a>
+                        <a th:href="@{/prostorije/{id}/delete(id=${prostorija.id})}" class="btn btn-danger btn-sm"
+                           onclick="return confirm('Jeste li sigurni da želite obrisati ovu prostoriju?')">Obriši</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(prostorije)}">
+                    <td colspan="6" class="text-center">Nema dostupnih prostorija</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

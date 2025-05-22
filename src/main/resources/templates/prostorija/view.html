@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Pregled prostorije</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h3>Pregled prostorije</h3>
+            <div>
+                <a th:href="@{/prostorije/{id}/edit(id=${prostorija.id})}" class="btn btn-warning">Uredi</a>
+                <a th:href="@{/prostorije}" class="btn btn-secondary">Natrag na popis</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <tr>
+                    <th>ID:</th>
+                    <td th:text="${prostorija.id}"></td>
+                </tr>
+                <tr>
+                    <th>Oznaka:</th>
+                    <td th:text="${prostorija.oznaka}"></td>
+                </tr>
+                <tr>
+                    <th>Naziv:</th>
+                    <td th:text="${prostorija.naziv}"></td>
+                </tr>
+                <tr>
+                    <th>Kapacitet:</th>
+                    <td th:text="${prostorija.kapacitet}"></td>
+                </tr>
+                <tr>
+                    <th>Status:</th>
+                    <td>
+                        <span th:if="${prostorija.aktivna}" class="badge bg-success">Aktivna</span>
+                        <span th:unless="${prostorija.aktivna}" class="badge bg-secondary">Neaktivna</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Opis:</th>
+                    <td th:text="${prostorija.opis ?: 'Nema opisa'}"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
